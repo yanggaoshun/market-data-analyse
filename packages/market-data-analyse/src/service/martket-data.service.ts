@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Market } from 'src/entity/market.entity';
+import { Market } from 'packages/market-data-analyse/src/entity/market.entity';
 import { InsertResult, Repository } from 'typeorm';
 
 @Injectable()

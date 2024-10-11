@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from 'src/controller/app.controller';
-import { AppService } from 'src/service/app.service';
+import { AppController } from 'packages/market-data-analyse/src/controller/app.controller';
+import { AppService } from 'packages/market-data-analyse/src/service/app.service';
 import { MarketDataModule } from './martket-data.module';
 
 @Module({

@@ -9,10 +9,10 @@ async function bootstrap() {
     heartbeatInterval: 30000,
     idleTimeout: 60000,
   });
-  const marketDataService = app.get(MarketDataService)
+  const marketDataService = app.get(MarketDataService);
   await api.connect();
-  api.subscribeQuotes("SH.000001", "SZ.002603", (data) => {
-    data.forEach((item)=>{
+  api.subscribeQuotes('SH.000001', 'SZ.002603', (data) => {
+    data.forEach((item) => {
       marketDataService.insert(item);
     });
   });
