@@ -76,6 +76,9 @@ importers:
       '@rollup/plugin-alias': ^5.1.1
       '@rollup/plugin-json': ^6.1.0
       '@rollup/plugin-node-resolve': ^15.3.0
+      '@types/node': ^20.3.1
+      bufferpack: ^0.0.6
+      dayjs: ^1.11.13
       npm-run-all: ^4.1.5
       rimraf: ^6.0.1
       rollup: ^4.24.0
@@ -90,6 +93,9 @@ importers:
       '@rollup/plugin-alias': 5.1.1_rollup@4.24.0
       '@rollup/plugin-json': 6.1.0_rollup@4.24.0
       '@rollup/plugin-node-resolve': 15.3.0_rollup@4.24.0
+      '@types/node': 20.16.11
+      bufferpack: 0.0.6
+      dayjs: 1.11.13
       npm-run-all: 4.1.5
       rimraf: 6.0.1
       rollup: 4.24.0
@@ -2144,7 +2150,6 @@ packages:
 
   /bufferpack/0.0.6:
     resolution: {integrity: sha512-MTWvLHElqczrIVhge9qHtqgNigJFyh0+tCDId5yCbFAfuekHWIG+uAgvoHVflwrDPuY/e47JE1ki5qcM7w4uLg==}
-    dev: false
 
   /builtin-modules/3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
@@ -2519,7 +2524,6 @@ packages:
 
   /dayjs/1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
-    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
