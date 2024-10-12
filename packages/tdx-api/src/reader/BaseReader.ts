@@ -23,10 +23,10 @@ export default abstract class BaseReader<Record> {
       );
     }
     const rawList = this.unpackRecordsBy32(content);
-    return rawList.map(this.parseRecord);
+    return rawList.map(this.parseRecord.bind(this));
   }
 
-  protected abstract parseRecord(record: any): Record;
+  protected abstract parseRecord(record: number[]): Record;
 
   getRecords() {
     return this.records;

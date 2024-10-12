@@ -16,6 +16,8 @@ const extensions = ['.js', '.ts'];
 export default {
   input: 'src/index.ts',
 
+  external: ["bufferpack", "dayjs", "fs"], // 告诉rollup不要将这些模块打包进去
+
   output: [
     {
       file: pkg.module,
@@ -27,16 +29,10 @@ export default {
       format: 'cjs', // commonjs 形式的包， require 导入
       sourcemap: true,
     },
-    {
-      file: 'lib/index.umd.js',
-      name: pkg.name,
-      format: 'umd', // umd 兼容形式的包， 可以直接应用于网页 script
-      sourcemap: true,
-      plugins: [uglify()], // 代码压缩
-    },
   ],
 
   plugins: [
+    uglify(),
     resolve({
       extensions,
       modulesOnly: true,

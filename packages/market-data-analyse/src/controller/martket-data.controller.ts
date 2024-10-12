@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { Market } from 'packages/market-data-analyse/src/entity/market.entity';
-import { MarketDataService } from 'packages/market-data-analyse/src/service/martket-data.service';
+import { Market } from 'src/entity/market.entity';
+import { MarketDataService } from 'src/service/martket-data.service';
 
 @Controller('/market')
 export class MarketDataController {
