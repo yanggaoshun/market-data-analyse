@@ -241,3 +241,21 @@ export function formatDateTime(...args: any[]) {
 
   return fmt;
 }
+
+export function calcStartTimestamp(startDateTime: string) {
+  if (startDateTime && /^\d{4}-\d{2}-\d{2}$/.test(startDateTime)) {
+    // 开始时间只有日期没有时间, 在后面加上' 00:00'
+    startDateTime += " 00:00";
+  }
+
+  return new Date(startDateTime).getTime();
+}
+
+export function calcEndTimestamp(endDatetime: string) {
+  if (endDatetime && /^\d{4}-\d{2}-\d{2}$/.test(endDatetime)) {
+    // 结束时间只有日期没有时间, 在后面加上' 15:00'
+    endDatetime += " 15:00";
+  }
+
+  return endDatetime ? new Date(endDatetime).getTime() : Date.now() + 3600000; // 1000 * 60 * 60, 多加个一小时的时间戳, 保证始终能查到最新的数据
+}

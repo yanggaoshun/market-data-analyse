@@ -1,5 +1,8 @@
 import { BaseSocketClient } from "../client/baseSocket";
 import { marketHosts, marketIds } from "../config/marketHosts";
+import { GetCompanyInfoCategory } from "../parse/getCompanyInfoCategory";
+import { GetCompanyInfoContent } from "../parse/getCompanyInfoContent";
+import { GetExRightInfo } from "../parse/getExRightInfo";
 import { GetFinanceInfo } from "../parse/getFinanceInfo";
 import { GetHistoryMinuteTimeData } from "../parse/getHistoryMinuteTimeData";
 import { GetHistoryTransactionData } from "../parse/getHistoryTransactionData";
@@ -9,9 +12,10 @@ import { GetSecurityBars } from "../parse/getSecurityBars";
 import { GetSecurityCount } from "../parse/getSecurityCount";
 import { GetSecurityList } from "../parse/getSecurityList";
 import { GetSecurityQuotes } from "../parse/getSecurityQuotes";
+import { GetTransactionData } from "../parse/getTransactionData";
 import { SetupCmd1, SetupCmd2, SetupCmd3 } from "../parse/setupCommands";
 import { EMarketType } from "../types/enum";
-import { parseSymbol } from "../utils";
+import { calcEndTimestamp, calcStartTimestamp, parseSymbol } from "../utils";
 
 export default class TdxMarket extends BaseSocketClient {
   doPing() {
@@ -88,14 +92,24 @@ export default class TdxMarket extends BaseSocketClient {
     return await cmd.callApi();
   }
 
-  async getSecurityBars(period: keyof typeof EMarketType, symbol: string, start: number, count: number) {
+  async getSecurityBars(
+    period: keyof typeof EMarketType,
+    symbol: string,
+    start: number,
+    count: number,
+  ) {
     const { code, marketId } = parseSymbol(symbol);
     const cmd = new GetSecurityBars(this.client);
     cmd.setParams(EMarketType[period], marketId, code, start, count);
     return await cmd.callApi();
   }
 
-  async getIndexBars(period: keyof typeof EMarketType, symbol: string, start: number, count: number) {
+  async getIndexBars(
+    period: keyof typeof EMarketType,
+    symbol: string,
+    start: number,
+    count: number,
+  ) {
     const { code, marketId } = parseSymbol(symbol);
     const cmd = new GetIndexBars(this.client);
     cmd.setParams(EMarketType[period], marketId, code, start, count);
@@ -123,7 +137,12 @@ export default class TdxMarket extends BaseSocketClient {
     return await cmd.callApi();
   }
 
-  async getHistoryTransactionData(symbol: string, start: number, count: number, date: string) {
+  async getHistoryTransactionData(
+    symbol: string,
+    start: number,
+    count: number,
+    date: string,
+  ) {
     const { code, marketId } = parseSymbol(symbol);
     const cmd = new GetHistoryTransactionData(this.client);
     cmd.setParams(marketId, code, start, count, date);
@@ -137,7 +156,12 @@ export default class TdxMarket extends BaseSocketClient {
     return await cmd.callApi();
   }
 
-  async getCompanyInfoContent(symbol: string, filename: string, start: number, length: number) {
+  async getCompanyInfoContent(
+    symbol: string,
+    filename: string,
+    start: number,
+    length: number,
+  ) {
     const { code, marketId } = parseSymbol(symbol);
     const cmd = new GetCompanyInfoContent(this.client);
     cmd.setParams(marketId, code, filename, start, length);
@@ -171,18 +195,19 @@ export default class TdxMarket extends BaseSocketClient {
 
     let startTimestamp: number, endTimestamp: number;
 
-    if (startDatetime) {
-      startTimestamp = calcStartTimestamp(startDatetime);
-    }
+    startTimestamp = calcStartTimestamp(startDatetime);
 
-    if (endDatetime) {
-      endTimestamp = calcEndTimestamp(endDatetime);
-    }
+    endTimestamp = calcEndTimestamp(endDatetime);
 
-    let bars = [];
+    let bars: any[] = [];
     let i = 0;
     while (true) {
-      let list = await this.getSecurityBars(period, symbol, i++ * 700, 700); // i++ * 8 => i * 8; i++;
+      let list = (await this.getSecurityBars(
+        period as keyof typeof EMarketType,
+        symbol,
+        i++ * 700,
+        700,
+      )) as any[]; // i++ * 8 => i * 8; i++;
 
       if (!list || !list.length) {
         break;
@@ -249,27 +274,34 @@ export default class TdxMarket extends BaseSocketClient {
    * @param {String} endDatetime
    * @param {Integer} count
    */
-  async findIndexBars(period = "D", symbol, startDatetime, endDatetime, count) {
+  async findIndexBars(
+    period = "D",
+    symbol: string,
+    startDatetime: string,
+    endDatetime: string,
+    count: number,
+  ) {
     // 具体详情参见 https://github.com/rainx/pytdx/issues/5
     // 具体详情参见 https://github.com/rainx/pytdx/issues/21
 
     // https://github.com/rainx/pytdx/issues/33
     // 0 - 深圳， 1 - 上海
 
-    let startTimestamp, endTimestamp;
+    let startTimestamp: number, endTimestamp: number;
 
-    if (startDatetime) {
-      startTimestamp = calcStartTimestamp(startDatetime);
-    }
+    startTimestamp = calcStartTimestamp(startDatetime);
 
-    if (endDatetime) {
-      endTimestamp = calcEndTimestamp(endDatetime);
-    }
+    endTimestamp = calcEndTimestamp(endDatetime);
 
-    let bars = [];
+    let bars: any[] = [];
     let i = 0;
     while (true) {
-      let list = await this.getIndexBars(period, symbol, i++ * 700, 700); // i++ * 8 => i * 8; i++;
+      let list = (await this.getIndexBars(
+        period as keyof typeof EMarketType,
+        symbol,
+        i++ * 700,
+        700,
+      )) as any[]; // i++ * 8 => i * 8; i++;
 
       if (!list || !list.length) {
         break;
@@ -338,7 +370,13 @@ export default class TdxMarket extends BaseSocketClient {
    * @param {String} endDatetime
    * @param {Integer} count
    */
-  findBars(period = "D", symbol, startDatetime, endDatetime, count) {
+  findBars(
+    period = "D",
+    symbol: string,
+    startDatetime: string,
+    endDatetime: string,
+    count: number,
+  ) {
     const { isIndex } = parseSymbol(symbol);
     return isIndex
       ? this.findIndexBars(period, symbol, startDatetime, endDatetime, count)
@@ -351,84 +389,9 @@ export default class TdxMarket extends BaseSocketClient {
         );
   }
 
-  /**
-   * 订阅函数会创建子进程不断的调用methodName指定的方法
-   * @param {Array} args
-   * args = [methodName, ...actualArgs, callback]
-   */
-  subscribe(...args) {
-    const methodName = args.shift();
-    const callback = args.pop();
-
-    if (!this[methodName] || typeof this[methodName] !== "function") {
-      throw new Error(
-        "first argument of subscribe must be an existing function name.",
-      );
-    }
-
-    if (typeof callback !== "function") {
-      throw new Error("last argument of subscribe must be a function.");
-    }
-
-    let child;
-    // 支持线程则使用线程
-    if (Worker) {
-      child = new Worker(path.join(__dirname, "./hqWorker.js"));
-      child.postMessage([methodName, args, this.host, this.port]);
-    }
-    // 不支持线程则使用进程
-    else {
-      child = childProcess.fork(
-        path.join(__dirname, "./hqChildProcess.js"),
-        [methodName, args, this.host, this.port],
-        { stdio: ["pipe", "pipe", "pipe", "ipc"] },
-      );
-    }
-
-    child.on("message", (data) => {
-      callback(data);
-    });
-
-    return child;
-  }
-
-  /**
-   * 订阅quotes函数会创建子进程不断的调用getSecurityQuotes
-   * @param {Array} args
-   * args = [...actualArgs, callback]
-   */
-  subscribeQuotes(...args) {
-    const callback = args.pop();
-
-    if (typeof callback !== "function") {
-      throw new Error("last argument of subscribe must be a function.");
-    }
-
-    let child;
-    // 支持线程则使用线程
-    if (Worker) {
-      child = new Worker(path.join(__dirname, "./subscribeQuotesWorker.js"));
-      child.postMessage([args, this.host, this.port]);
-    }
-    // 不支持线程则使用进程
-    else {
-      child = childProcess.fork(
-        path.join(__dirname, "./subscribeQuotesChildProcess.js"),
-        [args, this.host, this.port],
-        { stdio: ["pipe", "pipe", "pipe", "ipc"] },
-      );
-    }
-
-    child.on("message", (data) => {
-      callback(data);
-    });
-
-    return child;
-  }
-
-  async findStockList(marketId) {
+  async findStockList(marketId: "SH" | "SZ"): Promise<any[]> {
     if (marketId) {
-      const list = [],
+      const list: any[] = [],
         step = 1000;
       const regMap = {
         SH: /^6[08]\d{4}$/,
@@ -440,7 +403,7 @@ export default class TdxMarket extends BaseSocketClient {
         tmpList;
 
       do {
-        tmpList = await this.getSecurityList(marketId, i++ * step);
+        tmpList = (await this.getSecurityList(marketId, i++ * step)) as any[];
         tmpList.forEach((item) => {
           if (reg.test(item.code)) {
             item.symbol = marketId + "." + item.code;
@@ -458,23 +421,3 @@ export default class TdxMarket extends BaseSocketClient {
     }
   }
 }
-
-Object.getOwnPropertyNames(TdxMarketApi.prototype).forEach((name) => {
-  const property = TdxMarketApi.prototype[name];
-  if (typeof property === "function" && /^get/.test(name)) {
-    TdxMarketApi.prototype[name] = new Proxy(property, {
-      apply(target, thisArg, argumentsList) {
-        return new Promise((resolve, reject) => {
-          thisArg.reqQueue.push([
-            resolve,
-            reject,
-            target,
-            thisArg,
-            argumentsList,
-          ]);
-          thisArg.checkQueue();
-        });
-      },
-    });
-  }
-});
