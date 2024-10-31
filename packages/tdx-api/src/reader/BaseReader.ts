@@ -22,7 +22,7 @@ export default abstract class BaseReader<Record> {
         `no tdx day data, please check path ${filename}`
       );
     }
-    const rawList = this.unpackRecordsBy32(content);
+    const rawList = this.unpackRecordsBy32(content) as number[][];
     return rawList.map(this.parseRecord.bind(this));
   }
 

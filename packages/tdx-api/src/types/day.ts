@@ -1,5 +1,5 @@
 export interface IDayData {
-  date: string;
+  date: Date; // 日期
   open: string; // 开盘价
   high: string; // 最高价
   low: string; // 最低价

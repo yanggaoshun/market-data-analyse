@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from 'src/controller/app.controller';
 import { AppService } from 'src/service/app.service';
-import { MarketDataModule } from './martket-data.module';
+import { MarketDataModule } from './market-data.module';
+import { ScheduleModule } from './schedule.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MarketDataModule } from './martket-data.module';
       autoLoadEntities: true,
     }),
     MarketDataModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

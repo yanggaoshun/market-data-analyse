@@ -1,3 +1,1 @@
-import ReaderDayFile from "./reader/ReaderDayFile";
-
-export { ReaderDayFile };
+export { default as ReaderDayFile } from "./reader/ReaderDayFile";

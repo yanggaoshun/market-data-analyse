@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MarketDataController } from 'src/controller/martket-data.controller';
+import { MarketDataController } from 'src/controller/market-data.controller';
 import { Market } from 'src/entity/market.entity';
-import { MarketDataService } from 'src/service/martket-data.service';
+import { MarketDataService } from 'src/service/market-data.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Market])],

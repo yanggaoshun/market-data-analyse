@@ -16,7 +16,7 @@ import type { IDayData } from "../types/day";
  */
 export default class ReaderDayFile extends ReaderBase<IDayData> {
 
-  constructor(protected readonly filename: string) {
+  constructor(filename: string) {
     super();
     this.format = "<IIIIIfII";
     this.records = this.read(filename);
@@ -35,7 +35,7 @@ export default class ReaderDayFile extends ReaderBase<IDayData> {
     };
   }
 
-  private paseDate(date: number): string {
-    return dayjs(date.toString(), "YYYYMMDD").format("YYYY-MM-DD");
+  private paseDate(date: number): Date {
+    return dayjs(date, "YYYYMMDD").toDate();
   }
 }
