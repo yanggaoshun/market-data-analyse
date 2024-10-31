@@ -16,7 +16,7 @@ const extensions = ['.js', '.ts'];
 export default {
   input: 'src/index.ts',
 
-  external: ["bufferpack", "dayjs", "fs"], // 告诉rollup不要将这些模块打包进去
+  external: ["bufferpack", "dayjs", "fs", "net", "zlib"], // 告诉rollup不要将这些模块打包进去
 
   output: [
     {
