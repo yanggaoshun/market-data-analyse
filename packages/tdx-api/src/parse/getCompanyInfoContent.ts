@@ -31,12 +31,12 @@ export class GetCompanyInfoContent extends BaseParser {
 
   parseResponse(bodyBuf: Buffer) {
     let pos = 0;
-    const [, length] = bufferpack.unpack("<10sH", bodyBuf.subarray(0, 12)) as [
+    const [, length] = bufferpack.unpack("<10sH", bodyBuf.slice(0, 12)) as [
       string,
       number,
     ]; // _, length = struct.unpack(u'<10sH', bodyBuf[:12])
     pos += 12;
-    const content = bodyBuf.subarray(pos, pos + length);
+    const content = bodyBuf.slice(pos, pos + length);
     return this.decode(content, "gbk"); // content.decode('GBK', 'ignore')
   }
 

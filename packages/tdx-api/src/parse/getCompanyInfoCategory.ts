@@ -21,7 +21,7 @@ export class GetCompanyInfoCategory extends BaseParser {
    */
   parseResponse(bodyBuf: Buffer) {
     let pos = 0;
-    const [num] = bufferpack.unpack("<H", bodyBuf.subarray(pos, pos + 2)) as [
+    const [num] = bufferpack.unpack("<H", bodyBuf.slice(pos, pos + 2)) as [
       number,
     ]; // (num, ) = struct.unpack("<H", bodyBuf[:2])
     pos += 2;
@@ -31,7 +31,7 @@ export class GetCompanyInfoCategory extends BaseParser {
     for (let i = 0; i < num; i++) {
       const [name, filename, start, length] = bufferpack.unpack(
         "<64s80sII",
-        bodyBuf.subarray(pos, pos + 152),
+        bodyBuf.slice(pos, pos + 152),
       ) as [string, string, number, number]; // (name, filename, start, length) = struct.unpack(u"<64s80sII", bodyBuf[pos: pos+ 152])
       pos += 152;
 

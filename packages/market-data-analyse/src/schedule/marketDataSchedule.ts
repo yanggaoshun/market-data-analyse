@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { TdxMarket } from 'tdx-api';
+import { TdxMarketService } from 'src/service/tdx-market.service';
 
 @Injectable()
-export class MarketDataSchedule {
-  private readonly tdxMarket: TdxMarket;
-  constructor() {
-    this.tdxMarket = new TdxMarket();
-    this.tdxMarket.connect();
+export class MarketDataSchedule implements OnModuleInit {
+  constructor(private readonly tdxMarketService: TdxMarketService) {}
+  onModuleInit() {
+    (async () => {
+      await this.tdxMarketService.connect();
+      this.tdxMarketService.getSecurityCount('SH');
+      const res = await this.tdxMarketService.getSecurityQuotes('SH.601727');
+      console.log(res, 'res');
+    })();
   }
   @Cron('15 9 * * *')
   private async updateMarketData(): Promise<void> {
@@ -17,8 +21,7 @@ export class MarketDataSchedule {
   @Cron(CronExpression.EVERY_SECOND)
   private async test() {
     console.log('test');
-    // this.tdxMarket.getSecurityQuotes(['000001']).then((data) => {
-    //   console.log(data);
-    // });
+    // await this.tdxMarketService.connect();
+    // this.tdxMarketService.getSecurityCount('SH');
   }
 }

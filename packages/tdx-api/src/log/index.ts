@@ -25,8 +25,8 @@ class Logger {
 }
 const l = new Logger();
 
-const logger = l.getLogger();
-const setLogger = l.setLogger;
+const logger = () => l.getLogger();
+const setLogger = (logger: any) =>l.setLogger(logger);
 const setLevel = l.setLevel;
 
 export { logger, setLogger, setLevel };

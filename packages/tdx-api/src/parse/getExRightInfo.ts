@@ -49,7 +49,7 @@ export class GetExRightInfo extends BaseParser {
     pos += 9; // skip 9
     const [num] = bufferpack.unpack(
       "<H",
-      bodyBuf.subarray(pos, pos + 2),
+      bodyBuf.slice(pos, pos + 2),
     ) as number[];
     pos += 2;
 
@@ -84,7 +84,7 @@ export class GetExRightInfo extends BaseParser {
       [year, month, day, hour, minite, pos] = getDateTime(9, bodyBuf, pos);
       [category] = bufferpack.unpack(
         "<B",
-        bodyBuf.subarray(pos, pos + 1),
+        bodyBuf.slice(pos, pos + 1),
       ) as number[];
       pos += 1;
 
@@ -99,17 +99,17 @@ export class GetExRightInfo extends BaseParser {
       if (category === 1) {
         [fenhong, peigujia, songzhuangu, peigu] = bufferpack.unpack(
           "<ffff",
-          bodyBuf.subarray(pos, pos + 16),
+          bodyBuf.slice(pos, pos + 16),
         );
       } else if (category === 11 || category === 12) {
         [, , suogu] = bufferpack.unpack(
           "<IIfI",
-          bodyBuf.subarray(pos, pos + 16),
+          bodyBuf.slice(pos, pos + 16),
         );
       } else if (category === 13 || category === 14) {
         [xingquanjia, , fenshu] = bufferpack.unpack(
           "<fIfI",
-          bodyBuf.subarray(pos, pos + 16),
+          bodyBuf.slice(pos, pos + 16),
         );
       } else {
         [
@@ -119,7 +119,7 @@ export class GetExRightInfo extends BaseParser {
           houzonggubenRaw,
         ] = bufferpack.unpack(
           "<IIII",
-          bodyBuf.subarray(pos, pos + 16),
+          bodyBuf.slice(pos, pos + 16),
         ) as number[];
         panqianliutong = this.getV(panqianliutongRaw);
         panhouliutong = this.getV(panhouliutongRaw);

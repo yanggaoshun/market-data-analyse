@@ -173,7 +173,7 @@ export function getDateTime(category: number, buffer: Buffer, pos: number) {
   if (category < 4 || category === 7 || category === 8) {
     const [zippy, minutes] = bufferpack.unpack(
       "<HH",
-      buffer.subarray(pos, pos + 4),
+      buffer.slice(pos, pos + 4),
     ) as number[];
     year = (zippy >> 11) + 2004;
     month = ((zippy % 2048) / 100) | 0;

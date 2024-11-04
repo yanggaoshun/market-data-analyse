@@ -9,7 +9,7 @@ export default abstract class BaseReader<Record> {
   protected unpackRecordsBy32(data: Buffer) {
     const result = [];
     for (let offset = 0; offset < data.length; offset += 32) {
-      const r = bufferPack.unpack(this.format, data.subarray(offset, offset + 32));
+      const r = bufferPack.unpack(this.format, data.slice(offset, offset + 32));
       result.push(r);
     }
     return result;

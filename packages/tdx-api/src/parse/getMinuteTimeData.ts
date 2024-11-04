@@ -53,7 +53,7 @@ export class GetMinuteTimeData extends BaseParser {
     let pos = 0;
     const [num] = bufferpack.unpack(
       "<H",
-      bodyBuf.subarray(pos, pos + 2),
+      bodyBuf.slice(pos, pos + 2),
     ) as number[];
     let lastPrice = 0;
     pos += 4;

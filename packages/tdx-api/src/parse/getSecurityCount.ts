@@ -37,7 +37,7 @@ export class GetSecurityCount extends BaseParser {
   }
 
   parseResponse(bodyBuf: Buffer) {
-    const [num] = bufferpack.unpack('<H', bodyBuf.subarray(0, 2));
+    const [num] = bufferpack.unpack('<H', bodyBuf.slice(0, 2));
     return num;
   }
 

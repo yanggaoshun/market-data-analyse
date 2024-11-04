@@ -1,8 +1,8 @@
 import net from "net";
 import { PromiseSocket } from "promise-socket";
 import { sleep } from "../utils";
-import { logger } from "../log";
 import { SOCKET_CONFIG } from "../config/socket.config";
+import { logger, setLogger } from "../log";
 
 export abstract class BaseSocketClient {
   // 请求队列
@@ -17,7 +17,13 @@ export abstract class BaseSocketClient {
 
   lastAckTime: number = 0;
 
-  constructor(protected readonly onTimeout?: () => void) {
+  constructor(
+    newLogger?: any,
+    protected readonly onTimeout?: () => void,
+  ) {
+    if (newLogger) {
+      setLogger(newLogger);
+    };
     this.initClient();
   }
 
@@ -29,7 +35,7 @@ export abstract class BaseSocketClient {
     const promiseSocket = new PromiseSocket(socket);
     promiseSocket.setTimeout(SOCKET_CONFIG.idleTimeout);
     promiseSocket.socket.once("timeout", () => {
-      logger.error(
+      logger().error(
         `connection is timeout, max idle time is ${SOCKET_CONFIG.idleTimeout} ms.`,
       );
       this.onTimeout && this.onTimeout();
@@ -57,10 +63,8 @@ export abstract class BaseSocketClient {
       const firstGateWat = gateways[0];
       if (firstGateWat) {
         const [name, host, port, time] = firstGateWat;
-        logger.info(
-          "auto select best gateway is: %s, %dms.",
-          name + ":" + host + ":" + port,
-          time,
+        logger().info(
+          `auto select best gateway is: ${name}: ${host}:${port}, ${time}ms.`,
         );
         this.host = host;
         this.port = port;
@@ -70,13 +74,13 @@ export abstract class BaseSocketClient {
       this.port = port;
     }
 
-    logger.info("connecting to server %s on port %d", host, port);
+    logger().info(`connecting to server ${this.host} on port ${this.port}`);
 
     let connected: boolean = false;
     const t = Date.now();
 
     if (!this.client) {
-      logger.error("client is not initialized.");
+      logger().error("client is not initialized.");
       return false;
     }
     try {
@@ -84,7 +88,7 @@ export abstract class BaseSocketClient {
       this.reconnectTimes = 0;
       connected = true;
     } catch (e) {
-      logger.error(e);
+      logger().error(e);
     }
 
     if (!connected) {
@@ -92,7 +96,7 @@ export abstract class BaseSocketClient {
       return await this.tryReconnect();
     }
 
-    logger.info("socket connected, spent %d ms.", Date.now() - t);
+    logger().info(`socket connected, spent ${Date.now() - t} ms.`);
 
     if (SOCKET_CONFIG.needSetup) {
       await this.setup();
@@ -110,17 +114,17 @@ export abstract class BaseSocketClient {
     const promiseSocket = new PromiseSocket(socket);
     promiseSocket.setTimeout(SOCKET_CONFIG.pingTimeout);
     promiseSocket.socket.once("timeout", () => {
-      logger.error("ping timeout %s", host + ":" + port);
+      logger().error("ping timeout", host + ":" + port);
     });
     const t = Date.now();
     try {
       await promiseSocket.connect({ host, port });
       const time = Date.now() - t;
       promiseSocket.destroy();
-      logger.info("ping %s, %dms", host + ":" + port, time);
+      logger().info("ping", host + ":" + port, time);
       return time;
     } catch (e) {
-      logger.error(e);
+      logger().error(e);
     }
   }
 
@@ -159,11 +163,8 @@ export abstract class BaseSocketClient {
         return this.connect();
       } else {
         // 尝试重连失败
-        logger.error(
-          "failed to connect to server %s on %d, tried %d times.",
-          this.host,
-          this.port,
-          SOCKET_CONFIG.maxReconnectTimes,
+        logger().error(
+          `failed to connect to server ${this.host} on ${this.port}, tried ${SOCKET_CONFIG.maxReconnectTimes} times.`,
         );
         return Promise.reject(new Error("no available gateway."));
       }
@@ -176,7 +177,7 @@ export abstract class BaseSocketClient {
   private disconnect() {
     if (this.client) {
       this.client.destroy();
-      logger.info("disconnected");
+      logger().info("disconnected");
     }
   }
 
@@ -191,10 +192,8 @@ export abstract class BaseSocketClient {
     if (diff >= SOCKET_CONFIG.heartbeatInterval) {
       await this.doHeartbeat();
       this.heartbeatCount++;
-      logger.info(
-        "heart beat count %d, time diff %d ms.",
-        this.heartbeatCount,
-        diff,
+      logger().info(
+        `heart beat count ${this.heartbeatCount}, time ${diff}  ms.`,
       );
     }
 

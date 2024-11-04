@@ -49,9 +49,9 @@ export default class TdxMarket extends BaseSocketClient {
    * symbols的长度最大为80, 若超过80只股票则只查询前80只股票的quote
    * @param  {...any} symbols
    * ...symbols: 三种形式
-   * '000001.SZ'
-   * ['000001.SZ', '600519.SZ']
-   * '000001.SZ', '600519.SZ'
+   * 'SZ.000001'
+   * ['SZ.000001']
+   * 'SZ.000001', 'SZ.600519'
    */
   async getSecurityQuotes(...symbols: any[]) {
     let params;
@@ -389,7 +389,7 @@ export default class TdxMarket extends BaseSocketClient {
         );
   }
 
-  async findStockList(marketId: "SH" | "SZ"): Promise<any[]> {
+  async findStockList(marketId?: "SH" | "SZ"): Promise<any[]> {
     if (marketId) {
       const list: any[] = [],
         step = 1000;

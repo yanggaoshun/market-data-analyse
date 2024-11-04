@@ -45,7 +45,7 @@ import { bufferToBytes, findCSA, getPrice, getVolume, parsePrice } from '../util
   parseResponse(bodyBuf: Buffer) {
     let pos = 0;
     pos += 2; // skip b1 cb
-    const [numStock] = bufferpack.unpack('<H', bodyBuf.subarray(pos, pos + 2)) as number[];
+    const [numStock] = bufferpack.unpack('<H', bodyBuf.slice(pos, pos + 2)) as number[];
     pos += 2;
 
     // const startPosList = this.calcStartPosForEveryStock(bodyBuf);
@@ -60,7 +60,7 @@ import { bufferToBytes, findCSA, getPrice, getVolume, parsePrice } from '../util
       // pos = startPosList[i];
       // print (bodyBuf.slice(pos))
       // b'\x00000001\x95\n\x87\x0e\x01\x01\x05\x00\xb1\xb9\xd6\r\xc7\x0e\x8d\xd7\x1a\x84\x04S\x9c<M\xb6\xc8\x0e\x97\x8e\x0c\x00\xae\n\x00\x01\xa0\x1e\x9e\xb3\x03A\x02\x84\xf9\x01\xa8|B\x03\x8c\xd6\x01\xb0lC\x04\xb7\xdb\x02\xac\x7fD\x05\xbb\xb0\x01\xbe\xa0\x01y\x08\x01GC\x04\x00\x00\x95\n'
-      const [market, code, active1] = bufferpack.unpack('<B6sH', bodyBuf.subarray(pos, pos + 9));
+      const [market, code, active1] = bufferpack.unpack('<B6sH', bodyBuf.slice(pos, pos + 9));
       pos += 9;
       [price, pos] = getPrice(bodyBuf, pos);
       [preCloseDiff, pos] = getPrice(bodyBuf, pos);
@@ -83,7 +83,7 @@ import { bufferToBytes, findCSA, getPrice, getVolume, parsePrice } from '../util
       // }
       [totalVol, pos] = getPrice(bodyBuf, pos);
       [vol, pos] = getPrice(bodyBuf, pos);
-      [amountRaw] = bufferpack.unpack('<I', bodyBuf.subarray(pos, pos + 4)) as number[];
+      [amountRaw] = bufferpack.unpack('<I', bodyBuf.slice(pos, pos + 4)) as number[];
       amount = getVolume(amountRaw);
       pos += 4;
       [sellVol, pos] = getPrice(bodyBuf, pos);
@@ -132,7 +132,7 @@ import { bufferToBytes, findCSA, getPrice, getVolume, parsePrice } from '../util
       [reversedBytes6, pos] = getPrice(bodyBuf, pos);
       [reversedBytes7, pos] = getPrice(bodyBuf, pos);
       [reversedBytes8, pos] = getPrice(bodyBuf, pos);
-      [reversedBytes9, active2] = bufferpack.unpack('<hH', bodyBuf.subarray(pos, pos + 4)) as number[];
+      [reversedBytes9, active2] = bufferpack.unpack('<hH', bodyBuf.slice(pos, pos + 4)) as number[];
       pos += 4;
 
       stocks.push({

@@ -18,7 +18,7 @@ export class GetSecurityList extends BaseParser {
 
   parseResponse(bodyBuf: Buffer) {
     let pos = 0;
-    const [num] = bufferpack.unpack('<H', bodyBuf.subarray(0, 2)) as [number];
+    const [num] = bufferpack.unpack('<H', bodyBuf.slice(0, 2)) as [number];
     pos += 2;
     const stocks = [];
     for (let i = 0; i < num; i++) {
