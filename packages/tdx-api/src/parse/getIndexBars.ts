@@ -31,13 +31,15 @@
 
 // bytearray(b'\xa8\xa9\xa4I\x10R\rR') = 1348917 151741792256.00000
 
+import { logger } from "../log";
+import { EPeriodType } from "../types/enum";
 import { formatDateTime, getDateTime, getPrice, getVolume, parsePrice } from "../utils";
 import { BaseParser } from "./base";
 import bufferpack from 'bufferpack';
 
 export class GetIndexBars extends BaseParser {
-  private category: number = 0;
-  setParams(category: number, market: number, code: string, start: number, count: number) {
+  private category: EPeriodType = EPeriodType.D;
+  setParams(category: EPeriodType, market: number, code: string, start: number, count: number) {
     this.category = category
 
     const values = [
@@ -115,6 +117,7 @@ export class GetIndexBars extends BaseParser {
         upCount,
         downCount
       });
+      logger().info(klines[i])
     }
 
     return klines

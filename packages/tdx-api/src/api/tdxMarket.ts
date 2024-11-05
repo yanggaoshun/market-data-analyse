@@ -14,7 +14,7 @@ import { GetSecurityList } from "../parse/getSecurityList";
 import { GetSecurityQuotes } from "../parse/getSecurityQuotes";
 import { GetTransactionData } from "../parse/getTransactionData";
 import { SetupCmd1, SetupCmd2, SetupCmd3 } from "../parse/setupCommands";
-import { EMarketType } from "../types/enum";
+import { EMarketType, EPeriodType } from "../types/enum";
 import { calcEndTimestamp, calcStartTimestamp, parseSymbol } from "../utils";
 
 export default class TdxMarket extends BaseSocketClient {
@@ -93,26 +93,26 @@ export default class TdxMarket extends BaseSocketClient {
   }
 
   async getSecurityBars(
-    period: keyof typeof EMarketType,
+    period: EPeriodType,
     symbol: string,
     start: number,
     count: number,
   ) {
     const { code, marketId } = parseSymbol(symbol);
     const cmd = new GetSecurityBars(this.client);
-    cmd.setParams(EMarketType[period], marketId, code, start, count);
+    cmd.setParams(period, marketId, code, start, count);
     return await cmd.callApi();
   }
 
   async getIndexBars(
-    period: keyof typeof EMarketType,
+    period: EPeriodType,
     symbol: string,
     start: number,
     count: number,
   ) {
     const { code, marketId } = parseSymbol(symbol);
     const cmd = new GetIndexBars(this.client);
-    cmd.setParams(EMarketType[period], marketId, code, start, count);
+    cmd.setParams(period, marketId, code, start, count);
     return await cmd.callApi();
   }
 
@@ -174,14 +174,14 @@ export default class TdxMarket extends BaseSocketClient {
    * 若有endDatetime、count 且无 startDatetime, 则返回endDatetime之前的count根K线
    * 若有startDatetime、endDatetime 且无 count, 则返回startDatetime和endDatetime之间的K线
    * 若有startDatetime 且无 endDatetime、count, 则返回startDatetime到当前时间之间的K线
-   * @param {String} period 1m, 15m, 30m, H, D, W, M, Q, Y
+   * @param {EPeriodType} period
    * @param {String} symbol
    * @param {String} startDatetime
    * @param {String} endDatetime
    * @param {Integer} count
    */
   async findSecurityBars(
-    period = "D",
+    period = EPeriodType.D,
     symbol: string,
     startDatetime: string,
     endDatetime: string,
@@ -203,7 +203,7 @@ export default class TdxMarket extends BaseSocketClient {
     let i = 0;
     while (true) {
       let list = (await this.getSecurityBars(
-        period as keyof typeof EMarketType,
+        period,
         symbol,
         i++ * 700,
         700,
@@ -275,7 +275,7 @@ export default class TdxMarket extends BaseSocketClient {
    * @param {Integer} count
    */
   async findIndexBars(
-    period = "D",
+    period = EPeriodType.D,
     symbol: string,
     startDatetime: string,
     endDatetime: string,
@@ -297,7 +297,7 @@ export default class TdxMarket extends BaseSocketClient {
     let i = 0;
     while (true) {
       let list = (await this.getIndexBars(
-        period as keyof typeof EMarketType,
+        period,
         symbol,
         i++ * 700,
         700,
@@ -371,7 +371,7 @@ export default class TdxMarket extends BaseSocketClient {
    * @param {Integer} count
    */
   findBars(
-    period = "D",
+    period = EPeriodType.D,
     symbol: string,
     startDatetime: string,
     endDatetime: string,

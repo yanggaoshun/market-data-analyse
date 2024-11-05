@@ -1,8 +1,7 @@
 import net from "net";
 import { PromiseSocket } from "promise-socket";
-import { sleep } from "../utils";
 import { SOCKET_CONFIG } from "../config/socket.config";
-import { logger, setLogger } from "../log";
+import { logger } from "../log";
 
 export abstract class BaseSocketClient {
   // 请求队列
@@ -17,13 +16,11 @@ export abstract class BaseSocketClient {
 
   lastAckTime: number = 0;
 
+  connected: boolean = false;
+
   constructor(
-    newLogger?: any,
     protected readonly onTimeout?: () => void,
   ) {
-    if (newLogger) {
-      setLogger(newLogger);
-    };
     this.initClient();
   }
 
@@ -76,7 +73,6 @@ export abstract class BaseSocketClient {
 
     logger().info(`connecting to server ${this.host} on port ${this.port}`);
 
-    let connected: boolean = false;
     const t = Date.now();
 
     if (!this.client) {
@@ -86,12 +82,12 @@ export abstract class BaseSocketClient {
     try {
       await this.client.connect(this.port, this.host);
       this.reconnectTimes = 0;
-      connected = true;
+      this.connected = true;
     } catch (e) {
       logger().error(e);
     }
 
-    if (!connected) {
+    if (!this.connected) {
       this.reconnectTimes++;
       return await this.tryReconnect();
     }
@@ -106,7 +102,7 @@ export abstract class BaseSocketClient {
 
     SOCKET_CONFIG.useHeartbeat && this.checkHeartbeat();
 
-    return connected;
+    return this.connected;
   }
 
   async ping(host: string, port: number) {
@@ -169,8 +165,6 @@ export abstract class BaseSocketClient {
         return Promise.reject(new Error("no available gateway."));
       }
     }
-
-    await sleep(SOCKET_CONFIG.reconnectInterval);
     return await this.connect(this.host, this.port);
   }
 

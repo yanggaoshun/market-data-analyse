@@ -4,7 +4,7 @@ export const SOCKET_CONFIG = {
    // 心跳间隔
    heartbeatInterval: 15000,
    // 最大重连次数
-   maxReconnectTimes: 5,
+   maxReconnectTimes: 0,
    // 重连间隔
    reconnectInterval: 3000,
    // 自动选择最优网关

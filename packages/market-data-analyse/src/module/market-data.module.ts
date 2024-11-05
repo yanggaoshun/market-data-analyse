@@ -8,5 +8,6 @@ import { MarketDataService } from 'src/service/market-data.service';
   imports: [TypeOrmModule.forFeature([Market])],
   providers: [MarketDataService],
   controllers: [MarketDataController],
+  exports: [MarketDataService],
 })
 export class MarketDataModule {}

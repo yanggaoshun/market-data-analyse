@@ -1,4 +1,4 @@
-import { EMarketType } from "../types/enum";
+import { EMarketType, EPeriodType } from "../types/enum";
 import bufferpack from "bufferpack";
 
 export function sleep(ms: number) {
@@ -163,7 +163,7 @@ export function padStart(str: string | number, count: number, fillStr = "0") {
   }
 }
 
-export function getDateTime(category: number, buffer: Buffer, pos: number) {
+export function getDateTime(category: EPeriodType, buffer: Buffer, pos: number) {
   let year = 0,
     month = 0,
     day = 0,
